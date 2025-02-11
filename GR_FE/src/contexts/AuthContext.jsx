@@ -41,6 +41,34 @@ function AuthProvider({ children }) {
     }
   };
 
+  const handleSignup = async (
+    gmail,
+    password,
+    confirmPassword,
+    name,
+    role = "user"
+  ) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/signup`, {
+        gmail,
+        password,
+        confirmPassword,
+        name,
+        role,
+      });
+
+      if (response.data.status === "error") {
+        throw new Error(response.data.message);
+      }
+
+      setCurrentUser(response.data.data.currentUser);
+      setToken(response.data.token);
+      toast.success("Đăng ký thành công");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{

@@ -17,6 +17,29 @@ const signToken = (id) => {
   });
 };
 
+exports.signup = catchAsync(async (req, res, next) => {
+  const { password, confirmPassword } = req.body;
+  if (password !== confirmPassword)
+    return next(new AppError("Passwords do not match", 400));
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  const newUser = await User.create({
+    ...req.body,
+    password: hashedPassword,
+  });
+
+  const token = signToken(newUser.id);
+
+  return res.status(201).json({
+    status: "success",
+    token,
+    data: {
+      user: newUser,
+    },
+  });
+});
+
 exports.login = catchAsync(async (req, res, next) => {
   const { gmail, password } = req.body;
 

@@ -64,6 +64,7 @@ function App() {
             <Routes>
               <Route>
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Register />} />
               </Route>
             </Routes>
           </AuthProvider>
