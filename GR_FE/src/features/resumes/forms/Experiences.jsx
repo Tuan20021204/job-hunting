@@ -60,6 +60,17 @@ function Experiences() {
         >
           <AddIcon />
         </Fab>
+        {fields.length > 1 && (
+          <Fab
+            color="primary"
+            aria-label="remove"
+            size="small"
+            sx={{ color: "white" }}
+            onClick={() => remove(fields.length - 1)}
+          >
+            <RemoveIcon />
+          </Fab>
+        )}
       </Box>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
