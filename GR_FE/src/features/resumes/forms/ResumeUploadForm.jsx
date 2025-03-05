@@ -28,6 +28,14 @@ function ResumeUploadForm() {
 
   };
 
+  const validateFileSize = (file) => {
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return "File size must be less than 5MB";
+    }
+    return true;
+  };
+
   return (
     <Card variant="outlined" sx={{ maxWidth: "300px", margin: "0 auto" }}>
       <CardContent>
@@ -55,6 +63,7 @@ function ResumeUploadForm() {
               defaultValue=""
               rules={{
                 required: "Resume file is required",
+                validate: validateFileSize, // Add custom validation rule
               }}
               render={({ field }) => (
                 <React.Fragment>
