@@ -48,6 +48,13 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Thống kê" />
     </ListItemButton>
+
+    <ListItemButton component={Link} to="agent/chats">
+      <ListItemIcon>
+        <ChatBubbleIcon />
+      </ListItemIcon>
+      <ListItemText primary="Tin nhắn" />
+    </ListItemButton>
   </React.Fragment>
 );
 
