@@ -22,6 +22,14 @@ ChartJS.register(
 );
 
 function Chart({ data, hasTitle = true }) {
+  const limitedData = {
+    ...data,
+    labels: data.labels.slice(0, 60),
+    datasets: data.datasets.map((dataset) => ({
+      ...dataset,
+      data: dataset.data.slice(0, 60),
+    })),
+  };
 
   return (
     <Grid
@@ -42,7 +50,7 @@ function Chart({ data, hasTitle = true }) {
       )}
       <div style={{ overflowX: "auto", width: "100%" }}>
         <div style={{ width: "1500px" }}>
-          <Bar options={options} data={data} height="100px" />
+          <Bar options={options} data={limitedData} height="100px" />
         </div>
       </div>
     </Grid>

@@ -10,10 +10,10 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useStatistics } from "./useStatistics";
 import { useAuth } from "../../contexts/AuthContext";
 import JobAppliedByIndustries from "./JobsAppliedByIndustries";
+import AppliesStatistic from "./AppliesStatistics";
 
 // Define styled components
 const Root = styled("div")(({ theme }) => ({
@@ -105,6 +105,17 @@ const Dashboard = () => {
           </StyledPaper>
         </Grid>
 
+        <Grid item xs={12} sm={6} md={8}>
+          <StyledPaper>
+            <Typography variant="h6">
+              Thống kê tỉ lệ khi tham gia ứng tuyển
+            </Typography>
+            <Typography variant="body1">Biểu diễn bằng biểu đồ tròn</Typography>
+            <AppliesStatistic
+              statisticsByApplies={statistics.applyCountsByType}
+            />
+          </StyledPaper>
+        </Grid>
         <Grid item xs={12}>
           <StyledPaper>
             <Typography variant="h6">
