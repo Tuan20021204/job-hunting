@@ -16,6 +16,7 @@ import "react-quill/dist/quill.snow.css";
 import { quillModules, quillFormats } from "../../../constants/quill";
 import provinces from "../../../data/provincesData";
 import { useIndustries } from "../../../features/industries/useIndustries";
+import { useTags } from "../../../features/tags/useTags";
 
 const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
   const {
@@ -28,9 +29,14 @@ const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
   const [industriesList, setIndustriesList] = useState([]);
   const navigate = useNavigate();
   const { industries, isLoading, isError } = useIndustries();
+  const {
+    tags: availableTags,
+    isLoading: isTagsLoading,
+    isError: isTagsError,
+  } = useTags();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+  if (isLoading || isTagsLoading) return <div>Loading...</div>;
+  if (isError || isTagsError) return <div>Error...</div>;
 
   const handleFormSubmit = async (data) => {
     const transformedIndustriesList = industriesList.map((item) =>
@@ -39,6 +45,7 @@ const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
 
     const formData = {
       ...data,
+      tags: data.tags.map((tag) => (typeof tag === "string" ? tag : tag.tag)),
       company_id: currentUser.company_id,
       industries: transformedIndustriesList,
       token,
@@ -203,6 +210,19 @@ const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
                 options={industries}
                 getOptionLabel={(option) =>
                   typeof option === "string" ? option : option.industry
+                }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      key={
+                        typeof option === "string" ? option : option.id || index
+                      }
+                      label={
+                        typeof option === "string" ? option : option.industry
+                      }
+                      {...getTagProps({ index })}
+                    />
+                  ))
                 }
                 renderInput={(params) => (
                   <TextField
@@ -498,6 +518,89 @@ const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
                   </MenuItem>
                 ))}
               </TextField>
+            )}
+          />
+
+          <Controller
+            name="tags"
+            control={control}
+            defaultValue={[]} // Add a default value here
+            render={({ field: { value, onChange, ...other } }) => (
+              <Autocomplete
+                {...other}
+                multiple
+                freeSolo
+                value={value || []}
+                onChange={(event, newValue) => {
+                  const uniqueValues = newValue.filter(
+                    (option, index, self) =>
+                      index ===
+                      self.findIndex(
+                        (t) =>
+                          (typeof t === "string" ? t : t.tag) ===
+                          (typeof option === "string" ? option : option.tag)
+                      )
+                  );
+                  onChange(uniqueValues);
+                }}
+                options={availableTags}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.tag
+                }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      key={
+                        typeof option === "string" ? option : option.id || index
+                      }
+                      label={typeof option === "string" ? option : option.tag}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Tags"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    error={!!errors.tags}
+                    helperText={errors.tags?.message}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && event.target.value) {
+                        const newTag = event.target.value.trim();
+                        if (newTag) {
+                          const isDuplicate = (value || []).some(
+                            (item) =>
+                              (typeof item === "string" ? item : item.tag) ===
+                              newTag
+                          );
+
+                          if (!isDuplicate) {
+                            const updatedValue = [...(value || []), newTag];
+                            const uniqueValues = updatedValue.filter(
+                              (option, index, self) =>
+                                index ===
+                                self.findIndex(
+                                  (t) =>
+                                    (typeof t === "string" ? t : t.tag) ===
+                                    (typeof option === "string"
+                                      ? option
+                                      : option.tag)
+                                )
+                            );
+                            onChange(uniqueValues);
+                          }
+
+                          event.preventDefault();
+                          event.target.value = "";
+                        }
+                      }
+                    }}
+                  />
+                )}
+              />
             )}
           />
 
