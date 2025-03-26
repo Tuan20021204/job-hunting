@@ -10,9 +10,11 @@ import {
 import { CloudUpload } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useCreatePdfResume } from "../userCreateResume";
 
 function ResumeUploadForm() {
   const { currentUser } = useAuth();
+  const { isCreating, createPdfResume } = useCreatePdfResume(currentUser.id);
 
   const {
     control,
@@ -26,6 +28,7 @@ function ResumeUploadForm() {
     formData.append("resumeFile", data.resumeFile);
     formData.append("userId", currentUser.id);
 
+    createPdfResume(formData);
   };
 
   const validateFileSize = (file) => {
@@ -93,6 +96,7 @@ function ResumeUploadForm() {
               type="submit"
               variant="contained"
               color="primary"
+              disabled={isCreating}
             >
               Submit
             </Button>

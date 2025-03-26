@@ -53,8 +53,8 @@ const CreateJobForm = ({ onSubmit, isCreating, currentUser, token }) => {
         data.gender === "Tất cả"
           ? null
           : data.gender === "Nam"
-            ? "male"
-            : "female",
+          ? "male"
+          : "female",
     };
 
     await onSubmit(formData);
